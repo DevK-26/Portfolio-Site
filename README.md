@@ -37,4 +37,4 @@ npm run preview
 
 ## Live Site
 
-Visit the live site at: [https://devk-26.github.io/Portfolio-Site](https://devk-26.github.io/Portfolio-Site)
+Visit the live site at: https://portfolio-site-kvdg.onrender.com
