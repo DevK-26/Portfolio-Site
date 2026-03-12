@@ -20,11 +20,29 @@ function InputField({ label, type = 'text', multiline = false }) {
   return (
     <div>
       {multiline ? (
-        <textarea rows={5} placeholder={label} onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}
-                  className={`${base} ${borderClass}`} required />
+        <textarea
+          rows={5}
+          placeholder={label}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          className={`${base} ${borderClass}`}
+          required
+          name={label.replace(/\s+/g, '').toLowerCase()}
+          value={typeof arguments[0].value !== 'undefined' ? arguments[0].value : ''}
+          onChange={typeof arguments[0].onChange === 'function' ? arguments[0].onChange : undefined}
+        />
       ) : (
-        <input type={type} placeholder={label} onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}
-               className={`${base} ${borderClass}`} required />
+        <input
+          type={type}
+          placeholder={label}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          className={`${base} ${borderClass}`}
+          required
+          name={label.replace(/\s+/g, '').toLowerCase()}
+          value={typeof arguments[0].value !== 'undefined' ? arguments[0].value : ''}
+          onChange={typeof arguments[0].onChange === 'function' ? arguments[0].onChange : undefined}
+        />
       )}
     </div>
   )
@@ -38,6 +56,25 @@ export default function Contact() {
       setCopied(true)
       setTimeout(() => setCopied(false), 2500)
     })
+  }
+
+  const [form, setForm] = useState({
+    fullname: '',
+    emailaddress: '',
+    subject: '',
+    yourmessage: ''
+  })
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value })
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    const mailto = `mailto:${EMAIL}?subject=${encodeURIComponent(form.subject)}&body=${encodeURIComponent(
+      `Name: ${form.fullname}\nEmail: ${form.emailaddress}\n\n${form.yourmessage}`
+    )}`
+    window.location.href = mailto
   }
 
   return (
@@ -114,13 +151,13 @@ export default function Contact() {
             </div>
 
             {/* RIGHT — Form */}
-            <form className="flex flex-col gap-7" onSubmit={(e) => e.preventDefault()}>
+            <form className="flex flex-col gap-7" onSubmit={handleSubmit}>
               <div className="grid sm:grid-cols-2 gap-7">
-                <InputField label="Full Name" />
-                <InputField label="Email Address" type="email" />
+                <InputField label="Full Name" value={form.fullname} onChange={handleChange} />
+                <InputField label="Email Address" type="email" value={form.emailaddress} onChange={handleChange} />
               </div>
-              <InputField label="Subject" />
-              <InputField label="Your Message" multiline />
+              <InputField label="Subject" value={form.subject} onChange={handleChange} />
+              <InputField label="Your Message" multiline value={form.yourmessage} onChange={handleChange} />
               <button
                 type="submit"
                 className="w-full flex items-center justify-center gap-2 font-mono text-sm font-medium
