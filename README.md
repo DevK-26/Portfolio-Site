@@ -37,4 +37,4 @@ npm run preview
 
 ## Live Site
 
-Visit the live site at: https://portfolio-site-kvdg.onrender.com
+Visit the live site at: https://khushi.codescriet.dev/
