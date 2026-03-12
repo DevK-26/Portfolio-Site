@@ -1,7 +1,9 @@
+
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
 import { useScrollNavbar } from '../../hooks/useScrollNavbar.js'
+import avatar from '../../assets/avatar.jpg'
 
 const NAV_LINKS = [
   { label: 'About',      href: '#about'      },
@@ -29,10 +31,9 @@ export default function Navbar() {
         <nav className="max-w-7xl mx-auto px-4 sm:px-8 h-16 flex items-center justify-between">
           {/* Logo */}
           <a href="#" className="flex items-center gap-2.5 group" aria-label="Home">
-            <div className="w-9 h-9 rounded-full border-2 border-accent flex items-center justify-center
-                            text-accent font-display font-bold text-sm group-hover:bg-accent-dim transition-colors">
-              KY
-            </div>
+            <span className="w-9 h-9 flex items-center justify-center rounded-full overflow-hidden border-2 border-accent bg-surface">
+              <img src={avatar} alt="Avatar" className="w-full h-full object-cover" />
+            </span>
             <span className="hidden sm:block font-body text-sm text-muted group-hover:text-primary transition-colors">
               Khushi Yadav
             </span>
