@@ -11,6 +11,7 @@ import Contact    from './components/sections/Contact.jsx'
 import PageLoader from './components/ui/PageLoader.jsx'
 import ScrollToTop from './components/ui/ScrollToTop.jsx'
 import CustomCursor from './components/ui/CustomCursor.jsx'
+import SectionDivider from './components/ui/SectionDivider.jsx'
 
 export default function App() {
   const [loading, setLoading] = useState(true)
@@ -27,10 +28,15 @@ export default function App() {
           <Navbar />
           <main>
             <Hero />
+            <SectionDivider />
             <About />
+            <SectionDivider />
             <Skills />
+            <SectionDivider />
             <Projects />
+            <SectionDivider />
             <Experience />
+            <SectionDivider />
             <Contact />
           </main>
           <Footer />

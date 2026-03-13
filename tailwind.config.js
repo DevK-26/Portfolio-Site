@@ -28,6 +28,7 @@ export default {
         marquee: 'marquee 28s linear infinite',
         blink:   'blink 1s step-end infinite',
         pulse2:  'pulse 2s cubic-bezier(0.4,0,0.6,1) infinite',
+        'gradient-spin': 'gradient-spin 3s linear infinite',
       },
       keyframes: {
         marquee: {
@@ -37,6 +38,10 @@ export default {
         blink: {
           '0%,100%': { opacity: 1 },
           '50%':     { opacity: 0 },
+        },
+        'gradient-spin': {
+          '0%':   { transform: 'rotate(0deg) scale(1.5)' },
+          '100%': { transform: 'rotate(360deg) scale(1.5)' },
         },
       },
     },
