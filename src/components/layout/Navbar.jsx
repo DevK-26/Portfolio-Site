@@ -31,11 +31,8 @@ export default function Navbar() {
         <nav className="max-w-7xl mx-auto px-4 sm:px-8 h-16 flex items-center justify-between">
           {/* Logo */}
           <a href="#" className="flex items-center gap-2.5 group" aria-label="Home">
-            <span className="w-9 h-9 flex items-center justify-center rounded-full border-2 border-accent bg-surface">
-              <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="14" cy="14" r="13" stroke="#06b6d4" strokeWidth="2" fill="#fff" />
-                <text x="50%" y="55%" textAnchor="middle" fill="#06b6d4" fontSize="13" fontFamily="Arial, sans-serif" dy=".3em">KY</text>
-              </svg>
+            <span className="w-9 h-9 flex items-center justify-center rounded-full border-2 border-accent bg-surface overflow-hidden">
+              <img src="/site-favicon.jpg" alt="Site Icon" className="w-full h-full object-cover" />
             </span>
             <span className="hidden sm:block font-body text-sm text-muted group-hover:text-primary transition-colors">
               Khushi Yadav

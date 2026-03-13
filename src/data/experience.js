@@ -5,7 +5,7 @@ export const EXPERIENCE = [
     role: 'Platform Lead',
     company: 'code.scriet',
     url: 'https://codescriet.dev',
-    period: '2024 — Present',
+    period: '2025 — Present',
     bullets: [
       'Leading technical platform development — owning full-stack delivery from architecture to production.',
       'Shipping full-stack web applications with auth, backend APIs, real-time features, and database integration.',
@@ -33,7 +33,7 @@ export const EXPERIENCE = [
     role: 'BS — Data Science & Applications',
     company: 'IIT Madras',
     url: 'https://study.iitm.ac.in',
-    period: '2023 — Present',
+    period: '2024 — Present',
     bullets: [
       'Rigorous curriculum spanning ML, deep learning, NLP, probabilistic models, and system design.',
       'Applied research prototyping — translating academic theory into working, tested implementations.',
@@ -46,7 +46,7 @@ export const EXPERIENCE = [
     role: 'B.Tech — Computer Science & Engineering',
     company: 'CCSU Meerut',
     url: '#',
-    period: '2022 — Present',
+    period: '2024 — Present',
     bullets: [
       'Core CS fundamentals: algorithms, data structures, OS, networking, and database systems.',
       'Pursuing dual-degree path simultaneously with IIT Madras BS programme.',
