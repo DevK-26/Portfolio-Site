@@ -7,7 +7,8 @@ export const PROJECTS = [
       'An online recruitment portal for managing technical club applications and candidate shortlisting. Built to streamline the selection process for college tech clubs — with application forms, candidate tracking, and admin shortlisting flow.',
     stack: ['HTML', 'CSS', 'JavaScript'],
     github: 'https://github.com/DevK-26/Club-Recruitment-Portal',
-    live: null,
+    live: 'https://devk-26.github.io/Club-Recruitment-Portal/',
+    image: 'https://opengraph.githubassets.com/1/DevK-26/Club-Recruitment-Portal',
   },
   {
     id: 'portfolio',
@@ -15,9 +16,10 @@ export const PROJECTS = [
     title: 'Portfolio Site',
     description:
       'Responsive personal portfolio built with React, Vite, and Tailwind CSS — showcasing projects, skills, and experience with smooth Framer Motion animations and a clean dark UI.',
-    stack: ['React', 'Vite', 'Tailwind CSS', 'TypeScript', 'Framer Motion'],
+    stack: ['React', 'Vite', 'Tailwind CSS', 'Framer Motion'],
     github: 'https://github.com/DevK-26/Portfolio-Site',
     live: null,
+    image: 'https://opengraph.githubassets.com/1/DevK-26/Portfolio-Site',
   },
   {
     id: 'cohortlabs',
@@ -28,15 +30,6 @@ export const PROJECTS = [
     stack: ['JavaScript', 'HTML', 'CSS'],
     github: 'https://github.com/DevK-26/JavaScript-Conditionals-Labs-Cohort-2026',
     live: null,
-  },
-  {
-    id: 'cohortassignments',
-    featured: false,
-    title: 'Cohort Assignments',
-    description:
-      'Collection of structured web development assignments from the ChaiCode Web Dev Cohort 2026, progressing through HTML semantics, CSS layouts, and JavaScript interactivity.',
-    stack: ['HTML', 'CSS', 'JavaScript'],
-    github: 'https://github.com/DevK-26/Cohort-Assignments',
-    live: null,
+    image: 'https://opengraph.githubassets.com/1/DevK-26/JavaScript-Conditionals-Labs-Cohort-2026',
   },
 ]

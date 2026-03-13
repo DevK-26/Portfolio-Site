@@ -1,7 +1,7 @@
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import SectionLabel from '../ui/SectionLabel.jsx'
-import { Github, Linkedin, Twitter, Instagram, Mail, ArrowRight, Copy, Check } from 'lucide-react'
+import { Github, Linkedin, Twitter, Instagram, Mail, ArrowRight, Copy, Check, Send } from 'lucide-react'
 
 const EMAIL = 'khushiy9697@gmail.com'
 const SOCIALS = [
@@ -11,45 +11,42 @@ const SOCIALS = [
   { icon: Instagram, label: 'Instagram', href: 'https://instagram.com/khushi_.24__'              },
 ]
 
-function InputField({ label, type = 'text', multiline = false }) {
+function InputField({ label, name, type = 'text', multiline = false, value, onChange }) {
   const [focused, setFocused] = useState(false)
   const base = `w-full bg-transparent text-primary font-body text-sm placeholder-muted/50
                 border-b pb-3 pt-2 outline-none transition-colors duration-200 resize-none`
   const borderClass = focused ? 'border-accent' : 'border-border-bright'
 
-  return (
-    <div>
-      {multiline ? (
-        <textarea
-          rows={5}
-          placeholder={label}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
-          className={`${base} ${borderClass}`}
-          required
-          name={label.replace(/\s+/g, '').toLowerCase()}
-          value={typeof arguments[0].value !== 'undefined' ? arguments[0].value : ''}
-          onChange={typeof arguments[0].onChange === 'function' ? arguments[0].onChange : undefined}
-        />
-      ) : (
-        <input
-          type={type}
-          placeholder={label}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
-          className={`${base} ${borderClass}`}
-          required
-          name={label.replace(/\s+/g, '').toLowerCase()}
-          value={typeof arguments[0].value !== 'undefined' ? arguments[0].value : ''}
-          onChange={typeof arguments[0].onChange === 'function' ? arguments[0].onChange : undefined}
-        />
-      )}
-    </div>
+  return multiline ? (
+    <textarea
+      rows={5}
+      placeholder={label}
+      name={name}
+      value={value}
+      onChange={onChange}
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
+      className={`${base} ${borderClass}`}
+      required
+    />
+  ) : (
+    <input
+      type={type}
+      placeholder={label}
+      name={name}
+      value={value}
+      onChange={onChange}
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
+      className={`${base} ${borderClass}`}
+      required
+    />
   )
 }
 
 export default function Contact() {
   const [copied, setCopied] = useState(false)
+  const [status, setStatus] = useState('idle') // idle | sending | success | error
 
   const copy = () => {
     navigator.clipboard.writeText(EMAIL).then(() => {
@@ -59,22 +56,46 @@ export default function Contact() {
   }
 
   const [form, setForm] = useState({
-    fullname: '',
-    emailaddress: '',
+    name: '',
+    email: '',
     subject: '',
-    yourmessage: ''
+    message: ''
   })
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    const mailto = `mailto:${EMAIL}?subject=${encodeURIComponent(form.subject)}&body=${encodeURIComponent(
-      `Name: ${form.fullname}\nEmail: ${form.emailaddress}\n\n${form.yourmessage}`
-    )}`
-    window.location.href = mailto
+    setStatus('sending')
+
+    try {
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          access_key: 'YOUR_ACCESS_KEY',
+          name: form.name,
+          email: form.email,
+          subject: form.subject,
+          message: form.message,
+          from_name: 'Portfolio Contact Form',
+        }),
+      })
+
+      if (res.ok) {
+        setStatus('success')
+        setForm({ name: '', email: '', subject: '', message: '' })
+        setTimeout(() => setStatus('idle'), 4000)
+      } else {
+        setStatus('error')
+        setTimeout(() => setStatus('idle'), 4000)
+      }
+    } catch {
+      setStatus('error')
+      setTimeout(() => setStatus('idle'), 4000)
+    }
   }
 
   return (
@@ -122,7 +143,7 @@ export default function Contact() {
                       className="absolute -top-9 left-0 bg-elevated border border-accent rounded px-3 py-1
                                  font-mono text-xs text-accent-green whitespace-nowrap"
                     >
-                      ✓ Copied to clipboard
+                      Copied to clipboard
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -130,7 +151,7 @@ export default function Contact() {
 
               {/* Response time */}
               <p className="font-mono text-xs text-muted mb-8">
-                ⚡ Usually responds within 24 hours
+                Usually responds within 24 hours
               </p>
 
               {/* Socials */}
@@ -146,26 +167,48 @@ export default function Contact() {
                   </a>
                 ))}
               </div>
-
-
             </div>
 
             {/* RIGHT — Form */}
             <form className="flex flex-col gap-7" onSubmit={handleSubmit}>
               <div className="grid sm:grid-cols-2 gap-7">
-                <InputField label="Full Name" value={form.fullname} onChange={handleChange} />
-                <InputField label="Email Address" type="email" value={form.emailaddress} onChange={handleChange} />
+                <InputField label="Full Name" name="name" value={form.name} onChange={handleChange} />
+                <InputField label="Email Address" name="email" type="email" value={form.email} onChange={handleChange} />
               </div>
-              <InputField label="Subject" value={form.subject} onChange={handleChange} />
-              <InputField label="Your Message" multiline value={form.yourmessage} onChange={handleChange} />
+              <InputField label="Subject" name="subject" value={form.subject} onChange={handleChange} />
+              <InputField label="Your Message" name="message" multiline value={form.message} onChange={handleChange} />
+
               <button
                 type="submit"
+                disabled={status === 'sending'}
                 className="w-full flex items-center justify-center gap-2 font-mono text-sm font-medium
                            text-bg bg-accent rounded py-3.5
-                           hover:bg-accent/90 hover:shadow-teal transition-all duration-200"
+                           hover:bg-accent/90 hover:shadow-teal transition-all duration-200
+                           disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                Send Message <ArrowRight size={15} />
+                {status === 'sending' ? (
+                  <>Sending...</>
+                ) : status === 'success' ? (
+                  <>Message Sent <Check size={15} /></>
+                ) : status === 'error' ? (
+                  <>Failed — try again</>
+                ) : (
+                  <>Send Message <ArrowRight size={15} /></>
+                )}
               </button>
+
+              <AnimatePresence>
+                {status === 'success' && (
+                  <motion.p
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="font-mono text-xs text-accent-green text-center"
+                  >
+                    Thanks! I'll get back to you soon.
+                  </motion.p>
+                )}
+              </AnimatePresence>
             </form>
           </div>
         </motion.div>

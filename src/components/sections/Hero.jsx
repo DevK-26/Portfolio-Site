@@ -43,16 +43,15 @@ export default function Hero() {
                 className="font-display font-bold leading-[0.95] mb-6"
                 style={{ fontSize: 'clamp(3rem,9vw,5.75rem)' }}
               >
-                Building Systems
+                Code, Data
                 <br />
-                That{' '}
-                <span className="text-accent">Scale.</span>
+                &amp; <span className="text-accent">Impact.</span>
               </motion.h1>
 
               {/* Subtext */}
               <motion.p variants={fadeUp} className="font-body text-muted text-base leading-relaxed mb-10 max-w-xl">
-                A dual-degree candidate pursuing B.Tech CS&E at CCSU Meerut and BS Data Science at IIT Madras.
-                Building intelligent, full-stack systems where AI, ML, and web engineering converge.
+                I turn ideas into full-stack products and back them with data.
+                Pursuing dual degrees in CS &amp; Data Science — shipping real software while still in college.
               </motion.p>
 
               {/* CTAs */}

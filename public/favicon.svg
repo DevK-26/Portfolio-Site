@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <rect width="64" height="64" rx="14" fill="#080D10"/>
+  <rect x="2" y="2" width="60" height="60" rx="12" fill="none" stroke="#0ECCA8" stroke-width="2"/>
+  <text x="32" y="42" text-anchor="middle" fill="#0ECCA8" font-size="28" font-weight="700" font-family="system-ui, -apple-system, sans-serif" letter-spacing="-1">KY</text>
+</svg>
