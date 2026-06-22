@@ -5,6 +5,11 @@ import { Mail, ArrowRight, Copy, Check } from 'lucide-react'
 
 const EMAIL = 'khushiy9697@gmail.com'
 
+// Web3Forms access key — get a free one at https://web3forms.com (it's safe to
+// expose in client code). Set VITE_WEB3FORMS_KEY in your env, or paste it below.
+// While empty, the form gracefully falls back to opening the visitor's mail app.
+const WEB3FORMS_KEY = import.meta.env.VITE_WEB3FORMS_KEY || ''
+
 function InputField({ label, name, type = 'text', multiline = false, value, onChange }) {
   const [focused, setFocused] = useState(false)
   const base = `w-full bg-transparent text-primary font-body text-sm placeholder-muted/60
@@ -33,20 +38,44 @@ export default function Contact() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+
+    // No backend key yet → open the visitor's mail client, pre-filled.
+    if (!WEB3FORMS_KEY) {
+      const subject = encodeURIComponent(form.subject || `Portfolio enquiry from ${form.name}`)
+      const body = encodeURIComponent(`${form.message}\n\n— ${form.name} (${form.email})`)
+      window.location.href = `mailto:${EMAIL}?subject=${subject}&body=${body}`
+      return
+    }
+
     setStatus('sending')
     try {
       const res = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({
-          access_key: 'YOUR_ACCESS_KEY',
-          name: form.name, email: form.email, subject: form.subject, message: form.message,
+          access_key: WEB3FORMS_KEY,
+          name: form.name,
+          email: form.email,
+          subject: form.subject || `New portfolio message from ${form.name}`,
+          message: form.message,
           from_name: 'Portfolio Contact Form',
+          replyto: form.email,
+          botcheck: '',
         }),
       })
-      if (res.ok) { setStatus('success'); setForm({ name: '', email: '', subject: '', message: '' }); setTimeout(() => setStatus('idle'), 4000) }
-      else { setStatus('error'); setTimeout(() => setStatus('idle'), 4000) }
-    } catch { setStatus('error'); setTimeout(() => setStatus('idle'), 4000) }
+      const data = await res.json().catch(() => ({}))
+      if (res.ok && data.success) {
+        setStatus('success')
+        setForm({ name: '', email: '', subject: '', message: '' })
+        setTimeout(() => setStatus('idle'), 4000)
+      } else {
+        setStatus('error')
+        setTimeout(() => setStatus('idle'), 4000)
+      }
+    } catch {
+      setStatus('error')
+      setTimeout(() => setStatus('idle'), 4000)
+    }
   }
 
   return (
