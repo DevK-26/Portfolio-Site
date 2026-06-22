@@ -1,194 +1,132 @@
-import { useRef, useEffect, useState } from 'react'
+import { useEffect, useRef, useState, lazy, Suspense } from 'react'
 import { motion } from 'framer-motion'
-import { ArrowRight, ExternalLink } from 'lucide-react'
-import CodeWidget from '../ui/CodeWidget.jsx'
-import StatRow from '../ui/StatRow.jsx'
+import { Github, Linkedin, Twitter, Instagram, ArrowDownRight } from 'lucide-react'
 import Marquee from '../ui/Marquee.jsx'
+import ErrorBoundary from '../ui/ErrorBoundary.jsx'
 
-const fadeUp = { hidden: { opacity: 0, y: 30 }, show: { opacity: 1, y: 0 } }
-const container = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.12, delayChildren: 0.15 } },
-}
+// Three.js is heavy — split it into its own chunk so text paints first.
+const Scene = lazy(() => import('../three/Scene.jsx'))
 
-const ROLES = ['Full-Stack Developer', 'Data Science Engineer', 'AI Enthusiast', 'Open Source Builder']
+const ROLES = ['Full-Stack Developer', 'Data Science Engineer', 'AI Enthusiast', 'Open-Source Builder']
+const SOCIALS = [
+  { icon: Github,    href: 'https://github.com/DevK-26' },
+  { icon: Linkedin,  href: 'https://linkedin.com/in/khushi-yadav-066946296' },
+  { icon: Twitter,   href: 'https://twitter.com/KhushiYadav008' },
+  { icon: Instagram, href: 'https://instagram.com/khushi_.24__' },
+]
 
 function TypingRole() {
-  const [roleIndex, setRoleIndex] = useState(0)
+  const [i, setI] = useState(0)
   const [text, setText] = useState('')
-  const [deleting, setDeleting] = useState(false)
-
+  const [del, setDel] = useState(false)
   useEffect(() => {
-    const current = ROLES[roleIndex]
-    let timeout
-
-    if (!deleting && text === current) {
-      timeout = setTimeout(() => setDeleting(true), 2000)
-    } else if (deleting && text === '') {
-      setDeleting(false)
-      setRoleIndex((prev) => (prev + 1) % ROLES.length)
-    } else {
-      timeout = setTimeout(
-        () => {
-          setText(
-            deleting
-              ? current.slice(0, text.length - 1)
-              : current.slice(0, text.length + 1)
-          )
-        },
-        deleting ? 40 : 80
-      )
-    }
-
-    return () => clearTimeout(timeout)
-  }, [text, deleting, roleIndex])
-
-  return (
-    <span className="text-accent">
-      {text}
-      <span className="animate-blink">|</span>
-    </span>
-  )
+    const cur = ROLES[i]
+    let t
+    if (!del && text === cur) t = setTimeout(() => setDel(true), 1800)
+    else if (del && text === '') { setDel(false); setI((p) => (p + 1) % ROLES.length) }
+    else t = setTimeout(() => setText(del ? cur.slice(0, text.length - 1) : cur.slice(0, text.length + 1)), del ? 40 : 75)
+    return () => clearTimeout(t)
+  }, [text, del, i])
+  return <span className="text-accent">{text}<span className="animate-blink">_</span></span>
 }
 
+// word-mask line reveal for the name
+const lineWrap = { hidden: {}, show: { transition: { staggerChildren: 0.1, delayChildren: 0.15 } } }
+const line = { hidden: { y: '110%' }, show: { y: '0%', transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] } } }
+
 export default function Hero() {
-  const sectionRef = useRef(null)
-  const spotlightRef = useRef(null)
+  const ref = useRef(null)
+  // Pause the 3D render loop when the hero is off-screen (battery/perf), and
+  // never run it continuously for reduced-motion users.
+  const [animate, setAnimate] = useState(true)
 
   useEffect(() => {
-    const section = sectionRef.current
-    const spotlight = spotlightRef.current
-    if (!section || !spotlight) return
-
-    const handleMove = (e) => {
-      const rect = section.getBoundingClientRect()
-      const x = e.clientX - rect.left
-      const y = e.clientY - rect.top
-      spotlight.style.background = `radial-gradient(600px circle at ${x}px ${y}px, rgba(14,204,168,0.06), transparent 60%)`
-    }
-
-    section.addEventListener('mousemove', handleMove)
-    return () => section.removeEventListener('mousemove', handleMove)
+    const el = ref.current
+    if (!el) return
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reduce) { setAnimate(false); return }
+    const io = new IntersectionObserver(
+      ([entry]) => setAnimate(entry.isIntersecting),
+      { threshold: 0.05 }
+    )
+    io.observe(el)
+    return () => io.disconnect()
   }, [])
 
   return (
     <>
       <section
-        ref={sectionRef}
+        ref={ref}
         id="hero"
-        className="relative min-h-screen flex items-center overflow-hidden bg-bg"
-        style={{ paddingTop: 64 }}
+        className="relative min-h-[100svh] flex flex-col justify-center overflow-hidden bg-bg"
       >
-        {/* Static teal radial glow */}
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              'radial-gradient(ellipse 60% 60% at 20% 50%, rgba(14,204,168,0.07) 0%, transparent 70%)',
-          }}
-        />
-
-        {/* Mouse-follow spotlight */}
-        <div
-          ref={spotlightRef}
-          aria-hidden="true"
-          className="absolute inset-0 pointer-events-none transition-opacity duration-300"
-        />
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 w-full py-16">
-          <div className="grid lg:grid-cols-[1fr_460px] gap-16 items-center">
-            {/* LEFT */}
-            <motion.div variants={container} initial="hidden" animate="show" className="flex flex-col">
-              {/* Typing role */}
-              <motion.p variants={fadeUp} className="font-mono text-xs tracking-[0.2em] uppercase mb-6 h-5">
-                <TypingRole />
-              </motion.p>
-
-              {/* Heading */}
-              <motion.h1
-                variants={fadeUp}
-                className="font-display font-bold leading-[0.95] mb-6"
-                style={{ fontSize: 'clamp(3rem,9vw,5.75rem)' }}
-              >
-                Code, Data
-                <br />
-                &amp; <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-accent-green">Impact.</span>
-              </motion.h1>
-
-              {/* Subtext */}
-              <motion.p variants={fadeUp} className="font-body text-muted text-base leading-relaxed mb-10 max-w-xl">
-                I turn ideas into full-stack products and back them with data.
-                Pursuing dual degrees in CS &amp; Data Science — shipping real software while still in college.
-              </motion.p>
-
-              {/* CTAs */}
-              <motion.div variants={fadeUp} className="flex flex-wrap gap-3 mb-10">
-                <a
-                  href="#work"
-                  className="inline-flex items-center gap-2 font-mono text-sm font-medium
-                             text-bg bg-accent rounded px-6 py-3
-                             hover:bg-accent/90 hover:shadow-teal transition-all duration-200"
-                >
-                  View My Work <ArrowRight size={16} />
-                </a>
-                <a
-                  href="/resume.pdf"
-                  className="inline-flex items-center gap-2 font-mono text-sm font-medium
-                             text-accent border border-accent rounded px-6 py-3
-                             hover:bg-accent-dim transition-all duration-200"
-                >
-                  Download Resume <ExternalLink size={14} />
-                </a>
-                <a
-                  href="https://github.com/DevK-26"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 font-mono text-sm text-muted
-                             hover:text-accent transition-colors px-4 py-3"
-                >
-                  GitHub ↗
-                </a>
-              </motion.div>
-
-              {/* Stats */}
-              <motion.div variants={fadeUp}>
-                <StatRow />
-              </motion.div>
-            </motion.div>
-
-            {/* RIGHT — Photo + Code widget */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.92 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-              className="hidden lg:flex flex-col items-center gap-5"
-            >
-              {/* Photo card */}
-              <div className="relative w-full max-w-[460px]">
-                <div className="flex items-center gap-4 bg-elevated border border-border rounded-xl px-5 py-4">
-                  <div className="relative flex-shrink-0">
-                    <img
-                      src="https://avatars.githubusercontent.com/u/189853051?v=4"
-                      alt="Khushi Yadav"
-                      className="w-16 h-16 rounded-full object-cover border-2 border-accent"
-                    />
-                    <span className="absolute bottom-0 right-0 w-4 h-4 rounded-full bg-accent-green border-2 border-elevated" />
-                  </div>
-                  <div>
-                    <div className="font-display font-bold text-primary text-base">Khushi Yadav</div>
-                    <div className="font-mono text-xs text-accent mt-0.5">Platform Lead · code.scriet</div>
-                    <div className="font-mono text-xs text-muted mt-1">CCSU Meerut · IIT Madras</div>
-                  </div>
-                </div>
-              </div>
-              <CodeWidget />
-            </motion.div>
-          </div>
+        {/* 3D centerpiece — sits behind the type, biased to the right */}
+        <div aria-hidden="true"
+             className="absolute inset-0 lg:left-[35%] pointer-events-none opacity-60 lg:opacity-95">
+          <ErrorBoundary>
+            <Suspense fallback={null}><Scene active={animate} /></Suspense>
+          </ErrorBoundary>
         </div>
+        {/* readability veil — darker behind the type, especially on mobile */}
+        <div aria-hidden="true" className="absolute inset-0 pointer-events-none"
+             style={{ background: 'radial-gradient(ellipse 85% 80% at 20% 45%, rgba(10,10,10,0.94) 12%, rgba(10,10,10,0.55) 48%, transparent 82%)' }} />
+        <div aria-hidden="true" className="absolute inset-0 pointer-events-none lg:hidden"
+             style={{ background: 'linear-gradient(to bottom, rgba(10,10,10,0.4), transparent 30%, transparent 60%, rgba(10,10,10,0.6))' }} />
+
+        <div className="relative container-wide w-full px-5 sm:px-8 lg:px-14 pt-24">
+          <motion.p
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1, duration: 0.5 }}
+            className="font-mono text-[11px] sm:text-xs tracking-[0.25em] uppercase text-muted mb-6 flex items-center gap-3"
+          >
+            <span className="w-8 h-px bg-muted/50 inline-block" /> Hello, I&rsquo;m
+          </motion.p>
+
+          <motion.h1
+            variants={lineWrap} initial="hidden" animate="show"
+            className="font-display font-medium text-colossal text-primary uppercase"
+          >
+            <span className="block overflow-hidden pb-[0.14em] -mb-[0.08em]">
+              <motion.span variants={line} className="inline-block">Khushi</motion.span>
+            </span>
+            <span className="block overflow-hidden pb-[0.14em] -mb-[0.08em]">
+              <motion.span variants={line} className="inline-block">Yadav</motion.span>
+            </span>
+          </motion.h1>
+
+          <motion.div
+            initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6, duration: 0.6 }}
+            className="mt-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6"
+          >
+            <p className="font-mono text-sm sm:text-base text-muted max-w-md">
+              <TypingRole />
+              <span className="block mt-3 text-muted/80 leading-relaxed">
+                Turning ideas into full-stack products, backed by data. Dual degrees in CS &amp; Data Science.
+              </span>
+            </p>
+
+            <div className="flex items-center gap-4">
+              {SOCIALS.map(({ icon: Icon, href }, k) => (
+                <a key={k} href={href} target="_blank" rel="noopener noreferrer"
+                   className="w-10 h-10 rounded-full border border-border-bright flex items-center justify-center
+                              text-muted hover:text-bg hover:bg-primary hover:border-primary transition-all duration-300">
+                  <Icon size={16} />
+                </a>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+
+        {/* scroll cue */}
+        <motion.a
+          href="#work"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1, duration: 0.6 }}
+          className="absolute bottom-7 right-6 sm:right-10 font-mono text-[10px] tracking-[0.25em] uppercase text-muted
+                     flex items-center gap-2 hover:text-primary transition-colors"
+        >
+          Scroll <ArrowDownRight size={14} />
+        </motion.a>
       </section>
 
-      {/* Marquee ticker */}
       <Marquee />
     </>
   )

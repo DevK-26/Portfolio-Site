@@ -1,20 +1,22 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
-import Navbar     from './components/layout/Navbar.jsx'
-import Footer     from './components/layout/Footer.jsx'
-import Hero       from './components/sections/Hero.jsx'
-import About      from './components/sections/About.jsx'
-import Skills     from './components/sections/Skills.jsx'
-import Projects   from './components/sections/Projects.jsx'
-import Experience from './components/sections/Experience.jsx'
-import Contact    from './components/sections/Contact.jsx'
+import Navbar from './components/layout/Navbar.jsx'
+import Footer from './components/layout/Footer.jsx'
+import Hero from './components/sections/Hero.jsx'
+import Services from './components/sections/Services.jsx'
+import About from './components/sections/About.jsx'
+import Work from './components/sections/Work.jsx'
+import TechStack from './components/sections/TechStack.jsx'
+import Career from './components/sections/Career.jsx'
+import Contact from './components/sections/Contact.jsx'
 import PageLoader from './components/ui/PageLoader.jsx'
 import ScrollToTop from './components/ui/ScrollToTop.jsx'
 import CustomCursor from './components/ui/CustomCursor.jsx'
-import SectionDivider from './components/ui/SectionDivider.jsx'
+import { useLenis } from './hooks/useLenis.js'
 
 export default function App() {
   const [loading, setLoading] = useState(true)
+  useLenis()
 
   return (
     <>
@@ -28,15 +30,11 @@ export default function App() {
           <Navbar />
           <main>
             <Hero />
-            <SectionDivider />
+            <Services />
             <About />
-            <SectionDivider />
-            <Skills />
-            <SectionDivider />
-            <Projects />
-            <SectionDivider />
-            <Experience />
-            <SectionDivider />
+            <Work />
+            <TechStack />
+            <Career />
             <Contact />
           </main>
           <Footer />
